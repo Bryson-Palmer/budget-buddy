@@ -6,7 +6,7 @@ fetch("/api/transaction")
     return response.json();
   })
   .then(data => {
-    // save db data on global variable
+    // save db data in global variable
     transactions = data;
 
     populateTotal();
@@ -71,7 +71,7 @@ function populateChart() {
         datasets: [{
             label: "Total Over Time",
             fill: true,
-            backgroundColor: "#6666ff",
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
             data
         }]
     }
