@@ -24,7 +24,7 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/budget", {
   useFindAndModify: false
 })
 .then(() => console.log("Connected To MongoDB."))
-.catch(err => console.log(err));;
+.catch(err => console.log("Whoops!", err));;
 
 // routes
 app.use(require("./routes/api.js"));

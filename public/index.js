@@ -6,6 +6,7 @@ fetch("/api/transaction")
     return response.json();
   })
   .then(data => {
+    console.log("data", data);
     // save db data in global variable
     transactions = data;
 
@@ -141,27 +142,11 @@ function sendTransaction(isAdding) {
     // fetch failed, so save in indexed db
     saveRecord(transaction);
 
-    console.log("nameEl.value1", nameEl.value);
-
     // clear form
     nameEl.value = "";
     amountEl.value = "";
-    console.log("nameEl.value1", nameEl.value);
   });
 }
-
-// Save record function
-function saveRecord(transaction) {
-  console.log("transaction", transaction);
-  let savedTransactions = [];
-
-  if (transaction) {
-    savedTransactions.push(transaction);
-  }
-
-  addEventListener.
-
-};
 
 document.querySelector("#add-btn").onclick = function() {
   sendTransaction(true);

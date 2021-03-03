@@ -1,28 +1,37 @@
-const CACHE_NAME = "static-cache-v2";
-const DATA_CACHE_NAME = "data-cache-v1";
-
 const FILES_TO_CACHE = [
     "/",
-    "index.html",
-    "styles.css",
-    "index.js",
-    "manifest.webmanifest",
-    "icons/icon-192x192.png",
-    "icons/icon-512x512.png",
+    "/index.html",
+    "/styles.css",
+    "/index.js",
+    "/manifest.webmanifest",
+    "/icons/icon-192x192.png",
+    "/icons/icon-512x512.png",
     "https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css",
 ];
 
-// install
+const CACHE_NAME = "static-cache-v2";
+const DATA_CACHE_NAME = "data-cache-v1";
+
+
+// Install
 self.addEventListener("install", evt => {
     // pre cache transaction data
     evt.waitUntil(
-        caches.open(DATA_CACHE_NAME).then( cache => cache.add("/api/transaction"))
+        caches.open(DATA_CACHE_NAME).then( cache => {cache.add("/api/transaction")
+        console.log("Transactions pre-cached successfully!");
+    })
+        
     );
 
     // pre cache all static assets
     evt.waitUntil(
-        caches.open(CACHE_NAME).then( cache => cache.addAll(FILES_TO_CACHE))
-        
+        caches
+            .open(CACHE_NAME)
+            .then( cache => {
+                cache.addAll(FILES_TO_CACHE)
+                console.log("Static files were pre-cached successfully!");
+                return cache.addAll(FILES_TO_CACHE);
+            })
     );
 
     // tell the browser to activate this service worker immediately once it
@@ -30,7 +39,7 @@ self.addEventListener("install", evt => {
     self.skipWaiting();
 });
 
-// activate
+// Activate
 self.addEventListener("activate", evt => {
     evt.waitUntil(
         caches.keys().then( keyList => {
@@ -48,7 +57,7 @@ self.addEventListener("activate", evt => {
     self.clients.claim();
 });
 
-// fetch
+// Fetch
 self.addEventListener("fetch", evt => {
     // cache successful requests to the API
     if (evt.request.url.includes("/api/")) {
