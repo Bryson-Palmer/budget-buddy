@@ -15,6 +15,7 @@ fetch("/api/transaction")
   });
 
 function populateTotal() {
+  console.log("transactionsTotal", transactions);
   // reduce transaction amounts to a single total value
   let total = transactions.reduce((total, t) => {
     return total + parseInt(t.value);
@@ -28,6 +29,7 @@ function populateTable() {
   let tbody = document.querySelector("#tbody");
   tbody.innerHTML = "";
 
+  console.log("transactionsTable", transactions);
   transactions.forEach(transaction => {
     // create and populate a table row
     let tr = document.createElement("tr");
@@ -41,6 +43,7 @@ function populateTable() {
 }
 
 function populateChart() {
+  console.log("transactionsChart", transactions);
   // copy array and reverse it
   let reversed = transactions.slice().reverse();
   let sum = 0;
@@ -138,11 +141,27 @@ function sendTransaction(isAdding) {
     // fetch failed, so save in indexed db
     saveRecord(transaction);
 
+    console.log("nameEl.value1", nameEl.value);
+
     // clear form
     nameEl.value = "";
     amountEl.value = "";
+    console.log("nameEl.value1", nameEl.value);
   });
 }
+
+// Save record function
+function saveRecord(transaction) {
+  console.log("transaction", transaction);
+  let savedTransactions = [];
+
+  if (transaction) {
+    savedTransactions.push(transaction);
+  }
+
+  addEventListener.
+
+};
 
 document.querySelector("#add-btn").onclick = function() {
   sendTransaction(true);
