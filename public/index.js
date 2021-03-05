@@ -2,28 +2,27 @@ let transactions = [];
 let myChart;
 
 fetch("/api/transaction")
-  .then(response => {
-    return response.json();
-  })
-  .then(data => {
+  .then((response) => response.json())
+  .then((data) => {
     console.log("data", data);
     // save db data in global variable
     transactions = data;
-
     populateTotal();
     populateTable();
     populateChart();
   });
 
 function populateTotal() {
-  console.log("transactionsTotal", transactions);
   // reduce transaction amounts to a single total value
-  let total = transactions.reduce((total, t) => {
-    return total + parseInt(t.value);
-  }, 0);
+  let total = transactions
+    .reduce((total, t) => {
+      return total + parseFloat(t.value);
+  }, 0)
+  .toFixed(2);
 
   let totalEl = document.querySelector("#total");
   totalEl.textContent = total;
+  console.log("total", total);
 }
 
 function populateTable() {
@@ -31,7 +30,7 @@ function populateTable() {
   tbody.innerHTML = "";
 
   console.log("transactionsTable", transactions);
-  transactions.forEach(transaction => {
+  transactions.forEach((transaction) => {
     // create and populate a table row
     let tr = document.createElement("tr");
     tr.innerHTML = `
@@ -50,14 +49,15 @@ function populateChart() {
   let sum = 0;
 
   // create date labels for chart
-  let labels = reversed.map(t => {
+  let labels = reversed.map((t) => {
     let date = new Date(t.date);
     return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
   });
 
   // create incremental values for chart
-  let data = reversed.map(t => {
+  let data = reversed.map((t) => {
     sum += parseInt(t.value);
+    // console.log("sum", sum);
     return sum;
   });
 
@@ -72,13 +72,15 @@ function populateChart() {
     type: 'line',
       data: {
         labels,
-        datasets: [{
+        datasets: [
+          {
             label: "Total Over Time",
             fill: true,
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
-            data
-        }]
-    }
+            backgroundColor: "rgba(52, 107, 235, 0.8)",
+            data,
+          },
+        ],
+      },
   });
 }
 
@@ -91,8 +93,7 @@ function sendTransaction(isAdding) {
   if (nameEl.value === "" || amountEl.value === "") {
     errorEl.textContent = "Missing Information";
     return;
-  }
-  else {
+  } else {
     errorEl.textContent = "";
   }
 
@@ -125,33 +126,34 @@ function sendTransaction(isAdding) {
       "Content-Type": "application/json"
     }
   })
-  .then(response => {    
-    return response.json();
-  })
-  .then(data => {
-    if (data.errors) {
-      errorEl.textContent = "Missing Information";
-    }
-    else {
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.errors) {
+        errorEl.textContent = "Missing Information";
+      } else {
+        // clear form
+        nameEl.value = "";
+        amountEl.value = "";
+      }
+    })
+    .catch((err) => {
+      // fetch failed, so save in indexed db
+      console.log("Inside catch because fetch failed.");
+      console.log("transaction in the catch", transaction);
+      saveRecord(transaction);
+
       // clear form
       nameEl.value = "";
       amountEl.value = "";
-    }
-  })
-  .catch(err => {
-    // fetch failed, so save in indexed db
-    saveRecord(transaction);
-
-    // clear form
-    nameEl.value = "";
-    amountEl.value = "";
-  });
+    });
 }
 
-document.querySelector("#add-btn").onclick = function() {
+document.querySelector('#add-btn').addEventListener('click', function (event) {
+  event.preventDefault();
   sendTransaction(true);
-};
+});
 
-document.querySelector("#sub-btn").onclick = function() {
+document.querySelector('#sub-btn').addEventListener('click', function (event) {
+  event.preventDefault();
   sendTransaction(false);
-};
+});
